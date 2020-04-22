@@ -198,4 +198,83 @@ grid.arrange(PRESENT, ABSENT, nrow = 1)
 
 ```
 
-We transformed the hit rates and false alarm rates in the d-prime estimates and bias estimates
+We transformed the hit rates and false alarm rates in the d-prime estimates and bias estimates.
+
+```{r dprime, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+
+# Correct for pcorrect = 0 or 1
+aggregate_data$adjPC = aggregate_data$pcorrect
+aggregate_data[aggregate_data$pcorrect == 1, ]$adjPC = 1 - (1/(2 * ntrials))
+aggregate_data[aggregate_data$pcorrect == 0, ]$adjPC = (1/(2 * ntrials))
+
+aggregate_data$zH = qnorm(aggregate_data$adjPC)
+aggregate_data[aggregate_data$present_absent == 0, ]$zH = qnorm(1-aggregate_data[aggregate_data$present_absent == 0, ]$adjPC)
+
+# Unique conditions
+conditions = unique(aggregate_data %>% select(resp_condition, deadline))
+
+dpdata <- data.table(
+                  subject=rep(NA, nsubjects*nconditions),  
+                  resptype=rep(NA, nsubjects*nconditions), 
+                  deadline=rep(NA, nsubjects*nconditions), 
+                  dprime =rep(NA, nsubjects*nconditions),
+                  c =rep(NA, nsubjects*nconditions),
+                  beta =rep(NA, nsubjects*nconditions))
+
+# Compute dprime
+idx = 1
+for (i in 1:nsubjects){
+  for (j in 1:nconditions){
+    scdata = aggregate_data[aggregate_data$subject == subject_id[i] & aggregate_data$resp_condition == conditions$resp_condition[j] & aggregate_data$deadline == conditions$deadline[j], ]
+    dpdata$subject[idx] = scdata$subject[1]
+    dpdata$resptype[idx] = scdata$resp_condition[1]
+    dpdata$deadline[idx] = scdata$deadline[1]
+    dpdata$dprime[idx] = scdata[scdata$present_absent == 1, ]$zH - scdata[scdata$present_absent == 0, ]$zH
+    dpdata$c[idx] = -.5 * (scdata[scdata$present_absent == 1, ]$zH + scdata[scdata$present_absent == 0, ]$zH)
+    dpdata$beta[idx] = exp(dpdata$dprime[idx] * dpdata$c[idx])
+    idx = idx + 1
+  }
+}
+
+```
+
+The following plot shows the d-prime data in each condition.
+
+
+```{r plot_dprime, echo=FALSE, warning=FALSE, message=FALSE, results="markup"}
+dp <- data_summary(dpdata, varname="dprime", groupnames=c("resptype", "deadline"))
+dp$se = dp$sd/sqrt(nsubjects)
+
+p <- ggplot(dp, aes(x=deadline, y=dprime, group=resptype, color=resptype)) + 
+  geom_line(size=1) +
+  geom_point(size=5)+
+  geom_errorbar(aes(ymin=dprime-se, ymax=dprime+se), size = .5, width=.2)
+
+# Finished line plot
+p+labs(title="D-prime comparison between conditions", x="Deadline Condition", y = "D-prime", color="Response Condition")+
+   theme_classic() 
+
+```
+
+The following plot shows the beta estimates in each condition.
+
+```{r plot_beta, echo=FALSE, warning=FALSE, message=FALSE, results="markup"}
+bp <- data_summary(dpdata, varname="beta", groupnames=c("resptype", "deadline"))
+bp$se = bp$sd/sqrt(nsubjects)
+
+p <- ggplot(bp, aes(x=deadline, y=beta, group=resptype, color=resptype)) + 
+  geom_line(size=1) +
+  geom_point(size=5)+
+  geom_errorbar(aes(ymin=beta-se, ymax=beta+se), size = .5, width=.2)
+
+# Finished line plot
+p+labs(title="Beta comparison between conditions", x="Deadline Condition", y = "Beta", color="Response Condition")+
+   theme_classic() 
+
+```
+
+Your task is to compute the inferential statistics for these two analyses.
+
+```{r write_data, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+fwrite(dpdata, "data/2020_eyewitness_dprime_data.csv")
+```
