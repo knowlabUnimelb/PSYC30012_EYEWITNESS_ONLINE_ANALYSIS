@@ -16,10 +16,12 @@ The following contains relevant details for the analysis of the eyewitness line-
 
 ### Participants
 
-```{r data_load, echo=TRUE, warning=FALSE, message=FALSE, results="hide"}
+```{r data_load, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
 rm(list=ls())
 library(tidyverse)
 library(workflowr)
+library(ggplot2)
+library(gridExtra)
 
 #define working directories
 inputdir <- "data"
@@ -30,8 +32,170 @@ datafn       <- paste(inputdir,"2020-pmc-eyewitness.csv",sep="/")
 data         <- read.csv(datafn, header = FALSE, col.names = colfile$Column) # Add column labels to data
 
 # Number of subjects
-nsubjects = length(unique(data$subject))
+subject_id = unique(data$subject)
+nsubjects = length(subject_id)
+
+# Number of lineup members
+nsuspects = 5
 
 ```
 
-There were r<nsubjects> PSYC30017 students who completed the experiment. 
+There were `r nsubjects` PSYC30017 students who completed the experiment. 
+
+
+### Procedure & Design
+
+* On each trial, participants viewed an image of a *perpetrator* that was immediately backward masked. The timing was as follows:
++ Perpetrator shown for 250 msec
++ Blank interval for 500 msec
++ Mask for 500 msec
++ Blank interval for 500 msec
+ 
+```{r condition_summary, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+
+condition_names = unique(data$condition_name[data$condition_name != "NULL"])
+condition_names = condition_names[c(1, 4, 3, 2)]
+nconditions = length(condition_names)
+
+ntrials = 16
+npractice = 3
+
+``` 
+ 
+* Following the perpetrator, `r nsuspects` potential *suspects* were shown in a sequential lineup. Participants had to respond as to whether they thought the suspect matched the perpetrator. There were `r nconditions` within-subject conditions that determined how the response was recorded. Participants either responded with or without a 3 sec deadline. The response was either a yes/no response (i.e., press J if you think the suspect matches the perpetrator; press F if you think the suspect does not match the perpetrator) or a confidence judgement (i.e., press 8 if you are certain the suspect matches the perpetrator, press 5 if you are uncertain that the suspect matches the perpetrator, press 4 if you uncertain that the suspect does not match the perpetrator, and press 1 if you are certain that the suspect does not match the perpetrator):
+
+  + Condition 1 (`r condition_names[1]`): yes/no response, no deadline
+  + Condition 2 (`r condition_names[2]`): yes/no response, deadline of 3 secs per suspect
+  + Condition 3 (`r condition_names[3]`): confidence, no deadline
+  + Condition 4 (`r condition_names[4]`): confidence, deadline of 3 secs per suspect
+
+* Participants completed `r npractice` practice trials and `r ntrials-npractice` experimental trials of each condition in a random order. All `r ntrials` are analysed.
+
+* There were an equal number of target present and target absent trials in each condition. 
+
+
+### Stimuli
+
+Suspects and lineup members were drawn randomly from a set of 54 black and white images of male faces taken from the Alex Kayser art book "Heads" (Kayser, 1997). On a trial absent lineup, `r nsuspects+1` faces were drawn at random, and one was randomly selected as the perpetrator; the remaining five were shown as suspects. On target present lineups, `r nsuspects` faces were drawn at random, and one was randomly chosen as the perpetrator.
+
+## Results
+
+ 
+```{r condition_analysis, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+
+# I need to compute d-prime and beta for each subject and each condition
+# I then need to save these in a data file for anlaysis in JASP
+
+# processed_data = rep(na, nsubjects*nconditions*ntrials, 6)
+library(data.table)
+processed_data <- data.table(
+                  subject=rep(NA, nsubjects*nconditions*ntrials),                                    condition=rep(NA, nsubjects*nconditions*ntrials), 
+                  deadline=rep(NA, nsubjects*nconditions*ntrials), 
+                  resptype=rep(NA, nsubjects*nconditions*ntrials), 
+                  trial=rep(NA, nsubjects*nconditions*ntrials),                                      present_absent=rep(NA, nsubjects*nconditions*ntrials),                             correct=rep(NA, nsubjects*nconditions*ntrials))
+# New columns: subject, condition, trial, target absent/present?, correct/incorrect, rt
+
+trialidx = seq(1,nsuspects*ntrials, by=nsuspects)
+idx = 1
+for (i in 1:nsubjects){
+  for (j in 1:nconditions){
+    scdata = data[data$subject == subject_id[i] & data$condition_name == condition_names[j], ]    
+    
+    for (k in 1:length(trialidx)){
+      tdata = scdata[trialidx[k]:(trialidx[k]+4), ]      
+      
+      processed_data$subject[idx] = subject_id[i]
+      processed_data$condition[idx] = as.character(condition_names[j])
+      processed_data$trial[idx] = k
+      
+      consplit = str_split(as.character(condition_names[j]), '_', simplify=TRUE)
+      processed_data$deadline[idx] = consplit[1,2]
+      processed_data$resptype[idx] = consplit[1,1]
+
+      if (all(tdata$lineup_type == "foil")){
+        processed_data$present_absent[idx] = 0  # Target absent      
+        
+        # Error types: 
+        if (all(tdata$correct == 1)){ # if all correct --> correct rejection
+          processed_data$correct[idx] = 1
+        } else {# if any chosen --> false alarm
+          processed_data$correct[idx] = 0
+        } # differentiate one chosen vs more than one chosen?
+        
+      } else { 
+        processed_data$present_absent[idx] = 1  # Target present
+        
+        # Error types
+        if (all(tdata$correct == 1)){ # if all correct --> hit
+          processed_data$correct[idx] = 1           
+        } else { # if target incorrect --> miss
+          processed_data$correct[idx] = 0
+        } # if foil chosen --> false alarm
+      }
+      idx = idx + 1
+    }
+  }
+}
+```
+
+```{r summarize_data, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+
+# Summarize data by subjects
+aggregate_data = aggregate(processed_data$correct, by=list(processed_data$present_absent, processed_data$resptype, processed_data$deadline, processed_data$subject), FUN=sum)
+aggregate_data$x = aggregate_data$x/(ntrials/2)
+colnames(aggregate_data) = c("present_absent", "resp_condition", "deadline", "subject", "pcorrect")
+
+# Alternative summary approach
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+    data_sum <- rename(data_sum, c("mean" = varname))
+ return(data_sum)
+}
+
+df2 <- data_summary(aggregate_data, varname="pcorrect", 
+                    groupnames=c("resp_condition", "deadline", "present_absent"))
+
+
+df2$se = df2$sd/sqrt(nsubjects)
+df2$resp_condition = as.factor(df2$resp_condition)
+df2$deadline = as.factor(df2$deadline)
+```
+
+```{r plot_data, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+# Plot figures
+p_pres<- ggplot(df2[df2$present_absent == 1, ], aes(x=deadline, y=pcorrect, fill=resp_condition)) + 
+  geom_bar(stat="identity", color="black", 
+           position=position_dodge()) +
+  geom_errorbar(aes(ymin=pcorrect-se, ymax=pcorrect+se), width=.2,
+                 position=position_dodge(.9)) 
+
+# Finished bar plot
+PRESENT <- p_pres+labs(title="Target Present Data", x="Deadline Condition", y = "Hit Rate", fill="Response Condition")+ylim(0,1)+ theme(aspect.ratio=1)+
+   theme_classic()
+   #+ scale_fill_manual(values=c('#999999','#E69F00'))
+
+p_abs<- ggplot(df2[df2$present_absent == 0, ], aes(x=deadline, y=1-pcorrect, fill=resp_condition)) + 
+  geom_bar(stat="identity", color="black", 
+           position=position_dodge()) +
+  geom_errorbar(aes(ymin=(1-pcorrect)-se, ymax=(1-pcorrect)+se), width=.2,
+                 position=position_dodge(.9)) 
+
+# Finished bar plot
+ABSENT <- p_abs+labs(title="Target Absent Data", x="Deadline Condition", y = "FA Rate", fill="Response Condition")+ylim(0,1)+ theme(aspect.ratio=1)+
+   theme_classic() + scale_fill_manual(values=c('#999999','#E69F00'))
+```
+
+The figure below shows the data average hit rate (from the target present trials) and false alarm rate (from the target absent trials) along with the standard errors for the Target Present and Target Absent lineups
+
+```{r plot_both, echo=FALSE, warning=FALSE, message=FALSE, results="markup"}
+grid.arrange(PRESENT, ABSENT, nrow = 1)
+
+```
+
+We transformed the hit rates and false alarm rates in the d-prime estimates and bias estimates
