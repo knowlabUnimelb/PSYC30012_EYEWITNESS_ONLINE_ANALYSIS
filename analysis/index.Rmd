@@ -8,4 +8,30 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+# Analysis for PSYC30017 PMC - Eyewitness Lab Report
+
+The following contains relevant details for the analysis of the eyewitness line-up data from 2020 PSYC30017 Perception, Memory & Cognition.
+
+## Method
+
+### Participants
+
+```{r data_load, echo=TRUE, warning=FALSE, message=FALSE, results="hide"}
+rm(list=ls())
+library(tidyverse)
+library(workflowr)
+
+#define working directories
+inputdir <- "data"
+
+# Reading data and variable names 
+colfile      <- read.csv(paste(inputdir,"data_dictionary.csv",sep="/"), fileEncoding="UTF-8-BOM")
+datafn       <- paste(inputdir,"2020-pmc-eyewitness.csv",sep="/") 
+data         <- read.csv(datafn, header = FALSE, col.names = colfile$Column) # Add column labels to data
+
+# Number of subjects
+nsubjects = length(unique(data$subject))
+
+```
+
+There were r<nsubjects> PSYC30017 students who completed the experiment. 

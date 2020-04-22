@@ -1,0 +1,15 @@
+﻿Column,Type,Null,Default,Comments
+subject,varchar(255),Yes,NULL,subject id number (randomly assigned)
+condition_name,varchar(255),Yes,NULL,"response_condition (yes/no vs conf, deadline vs no deadline)"
+trial_index,varchar(255),Yes,NULL,trial index (jsPsych event number)
+trial_event,varchar(255),Yes,NULL,jsPsych event type
+lineup_type,varchar(255),Yes,NULL,lineup member (target or foil)
+stimulus,varchar(255),Yes,NULL,stimulus image file
+key_press,varchar(255),Yes,NULL,response key code
+response,varchar(255),Yes,NULL,response key value
+correct,varchar(255),Yes,NULL,"1 = correct, 0 = incorrect"
+rt,varchar(255),Yes,NULL,response time (msec)
+too_slow,varchar(255),Yes,NULL,"1 = too slow, 0 = response ok"
+trial_type,varchar(255),Yes,NULL,ignore
+internal_node_id,varchar(255),Yes,NULL,ignore
+time_elapse,varchar(255),Yes,NULL,ignore
