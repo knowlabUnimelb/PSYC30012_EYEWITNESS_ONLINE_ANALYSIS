@@ -1,7 +1,7 @@
-name: "PSYC30012_EYEWITNESS_ONLINE_ANALYSIS"
+name: PSYC30012_EYEWITNESS_ONLINE_ANALYSIS
 output_dir: ../docs
 navbar:
-  title: "PSYC30012_EYEWITNESS_ONLINE_ANALYSIS"
+  title: PSYC30012_EYEWITNESS_ONLINE_ANALYSIS
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS
 output:
   workflowr::wflow_html:
     toc: yes
