@@ -22,6 +22,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
@@ -290,7 +292,13 @@ $(document).ready(function () {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -416,16 +424,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong8c6ea25"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> 8c6ea25 </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomknowlabUnimelbPSYC30012EYEWITNESSONLINEANALYSIStree8eaba6161ee66f0c0082d0196d866a93cfefd467targetblank8eaba61a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/tree/8eaba6161ee66f0c0082d0196d866a93cfefd467" target="_blank">8eaba61</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrong8c6ea25" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomknowlabUnimelbPSYC30012EYEWITNESSONLINEANALYSIStree8eaba6161ee66f0c0082d0196d866a93cfefd467targetblank8eaba61a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version 8c6ea25. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/tree/8eaba6161ee66f0c0082d0196d866a93cfefd467" target="_blank">8eaba61</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -478,7 +486,41 @@ Message
 Rmd
 </td>
 <td>
-8c6ea25
+<a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/blob/8eaba6161ee66f0c0082d0196d866a93cfefd467/analysis/index.Rmd" target="_blank">8eaba61</a>
+</td>
+<td>
+knowlabUnimelb
+</td>
+<td>
+2020-04-22
+</td>
+<td>
+PMC Lab Report Analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/7c733fc7576a7547a1df322136c7d6e898d383af/docs/index.html" target="_blank">7c733fc</a>
+</td>
+<td>
+knowlabUnimelb
+</td>
+<td>
+2020-04-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/blob/8c6ea2584fb685522b947cf3e2b8d7a329c89e21/analysis/index.Rmd" target="_blank">8c6ea25</a>
 </td>
 <td>
 knowlabUnimelb
@@ -495,7 +537,7 @@ PMC Lab Report Analysis
 Rmd
 </td>
 <td>
-6a6ca69
+<a href="https://github.com/knowlabUnimelb/PSYC30012_EYEWITNESS_ONLINE_ANALYSIS/blob/6a6ca69ebd73c71861b93a5663c4450aaddba194/analysis/index.Rmd" target="_blank">6a6ca69</a>
 </td>
 <td>
 knowlabUnimelb
@@ -521,21 +563,37 @@ Start workflowr project.
 <h2>Method</h2>
 <div id="participants" class="section level3">
 <h3>Participants</h3>
-<pre class="r"><code>rm(list=ls())
-library(tidyverse)
-library(workflowr)
-
-#define working directories
-inputdir &lt;- &quot;data&quot;
-
-# Reading data and variable names 
-colfile      &lt;- read.csv(paste(inputdir,&quot;data_dictionary.csv&quot;,sep=&quot;/&quot;), fileEncoding=&quot;UTF-8-BOM&quot;)
-datafn       &lt;- paste(inputdir,&quot;2020-pmc-eyewitness.csv&quot;,sep=&quot;/&quot;) 
-data         &lt;- read.csv(datafn, header = FALSE, col.names = colfile$Column) # Add column labels to data
-
-# Number of subjects
-nsubjects = length(unique(data$subject))</code></pre>
-<p>There were r<nsubjects> PSYC30017 students who completed the experiment.</p>
+<p>There were 75 PSYC30017 students who completed the experiment.</p>
+</div>
+<div id="procedure-design" class="section level3">
+<h3>Procedure &amp; Design</h3>
+<ul>
+<li><p>On each trial, participants viewed an image of a <em>perpetrator</em> that was immediately backward masked. The timing was as follows:</p></li>
+<li><p>Perpetrator shown for 250 msec</p></li>
+<li><p>Blank interval for 500 msec</p></li>
+<li><p>Mask for 500 msec</p></li>
+<li><p>Blank interval for 500 msec</p></li>
+<li><p>Following the perpetrator, 5 potential <em>suspects</em> were shown in a sequential lineup. Participants had to respond as to whether they thought the suspect matched the perpetrator. There were 4 within-subject conditions that determined how the response was recorded. Participants either responded with or without a 3 sec deadline. The response was either a yes/no response (i.e., press J if you think the suspect matches the perpetrator; press F if you think the suspect does not match the perpetrator) or a confidence judgement (i.e., press 8 if you are certain the suspect matches the perpetrator, press 5 if you are uncertain that the suspect matches the perpetrator, press 4 if you uncertain that the suspect does not match the perpetrator, and press 1 if you are certain that the suspect does not match the perpetrator):</p>
+<ul>
+<li>Condition 1 (yn_no_deadline): yes/no response, no deadline</li>
+<li>Condition 2 (yn_deadline): yes/no response, deadline of 3 secs per suspect</li>
+<li>Condition 3 (confidence_no_deadline): confidence, no deadline</li>
+<li>Condition 4 (confidence_deadline): confidence, deadline of 3 secs per suspect</li>
+</ul></li>
+<li><p>Participants completed 3 practice trials and 13 experimental trials of each condition in a random order. All 16 are analysed.</p></li>
+<li><p>There were an equal number of target present and target absent trials in each condition.</p></li>
+</ul>
+</div>
+<div id="stimuli" class="section level3">
+<h3>Stimuli</h3>
+<p>Suspects and lineup members were drawn randomly from a set of 54 black and white images of male faces taken from the Alex Kayser art book “Heads” (Kayser, 1997). On a trial absent lineup, 6 faces were drawn at random, and one was randomly selected as the perpetrator; the remaining five were shown as suspects. On target present lineups, 5 faces were drawn at random, and one was randomly chosen as the perpetrator.</p>
+</div>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>The figure below shows the data average hit rate (from the target present trials) and false alarm rate (from the target absent trials) along with the standard errors for the Target Present and Target Absent lineups</p>
+<p><img src="figure/index.Rmd/plot_both-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We transformed the hit rates and false alarm rates in the d-prime estimates and bias estimates</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -559,27 +617,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] forcats_0.5.0   stringr_1.4.0   dplyr_0.8.5     purrr_0.3.3    
- [5] readr_1.3.1     tidyr_1.0.2     tibble_3.0.0    ggplot2_3.3.0  
- [9] tidyverse_1.3.0 workflowr_1.6.1
+ [1] plyr_1.8.6        data.table_1.12.8 gridExtra_2.3     forcats_0.5.0    
+ [5] stringr_1.4.0     dplyr_0.8.5       purrr_0.3.3       readr_1.3.1      
+ [9] tidyr_1.0.2       tibble_3.0.0      ggplot2_3.3.0     tidyverse_1.3.0  
+[13] workflowr_1.6.1  
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.0.0 xfun_0.12        haven_2.2.0      lattice_0.20-38 
- [5] colorspace_1.4-1 vctrs_0.2.4      generics_0.0.2   htmltools_0.4.0 
- [9] yaml_2.2.1       rlang_0.4.5      later_1.0.0      pillar_1.4.3    
-[13] withr_2.1.2      glue_1.4.0       DBI_1.1.0        dbplyr_1.4.2    
-[17] readxl_1.3.1     modelr_0.1.6     lifecycle_0.2.0  cellranger_1.1.0
-[21] munsell_0.5.0    gtable_0.3.0     rvest_0.3.5      evaluate_0.14   
-[25] knitr_1.28       httpuv_1.5.2     fansi_0.4.1      broom_0.5.5     
-[29] Rcpp_1.0.4       promises_1.1.0   backports_1.1.5  scales_1.1.0    
-[33] jsonlite_1.6.1   fs_1.4.1         hms_0.5.3        digest_0.6.25   
-[37] stringi_1.4.6    rprojroot_1.3-2  grid_3.6.3       cli_2.0.2       
-[41] tools_3.6.3      magrittr_1.5     crayon_1.3.4     whisker_0.4     
-[45] pkgconfig_2.0.3  ellipsis_0.3.0   xml2_1.3.0       reprex_0.3.0    
-[49] lubridate_1.7.4  rstudioapi_0.11  assertthat_0.2.1 rmarkdown_2.1   
-[53] httr_1.4.1       R6_2.4.1         nlme_3.1-144     git2r_0.26.1    
-[57] compiler_3.6.3  </code></pre>
-</div>
+ [1] Rcpp_1.0.4       lubridate_1.7.4  lattice_0.20-38  assertthat_0.2.1
+ [5] rprojroot_1.3-2  digest_0.6.25    R6_2.4.1         cellranger_1.1.0
+ [9] backports_1.1.5  reprex_0.3.0     evaluate_0.14    httr_1.4.1      
+[13] pillar_1.4.3     rlang_0.4.5      readxl_1.3.1     rstudioapi_0.11 
+[17] whisker_0.4      rmarkdown_2.1    labeling_0.3     munsell_0.5.0   
+[21] broom_0.5.5      compiler_3.6.3   httpuv_1.5.2     modelr_0.1.6    
+[25] xfun_0.12        pkgconfig_2.0.3  htmltools_0.4.0  tidyselect_1.0.0
+[29] fansi_0.4.1      crayon_1.3.4     dbplyr_1.4.2     withr_2.1.2     
+[33] later_1.0.0      grid_3.6.3       nlme_3.1-144     jsonlite_1.6.1  
+[37] gtable_0.3.0     lifecycle_0.2.0  DBI_1.1.0        git2r_0.26.1    
+[41] magrittr_1.5     scales_1.1.0     cli_2.0.2        stringi_1.4.6   
+[45] farver_2.0.3     fs_1.4.1         promises_1.1.0   xml2_1.3.0      
+[49] ellipsis_0.3.0   generics_0.0.2   vctrs_0.2.4      tools_3.6.3     
+[53] glue_1.4.0       hms_0.5.3        yaml_2.2.1       colorspace_1.4-1
+[57] rvest_0.3.5      knitr_1.28       haven_2.2.0     </code></pre>
 </div>
 </div>
 </div>
